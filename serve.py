@@ -14,6 +14,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
+    def end_headers(self):
+        # Never let the browser reuse an old copy while you're editing files.
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
     def send_error(self, code, message=None, explain=None):
         if code != 404:
             return super().send_error(code, message, explain)

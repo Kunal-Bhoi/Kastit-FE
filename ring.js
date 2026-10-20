@@ -23,10 +23,79 @@ const CUTS = {
 };
 
 const GEM_R = 0.41;          // stone radius
-const BAND_TOP = 1.15;       // outer radius of the band
 const GIRDLE_Y = 1.53;       // height of the stone's widest point
 
-export function initRing(canvas, initial, { reducedMotion = false, onReady } = {}) {
+// Band cross-section: a rounded rectangle (superellipse) centred on rMid.
+export const BAND = { rMid: 1.075, halfT: 0.075, halfW: 0.16, exp: 0.55 };
+const BAND_TOP = BAND.rMid + BAND.halfT;   // outer radius of the band
+
+export const CLAW_R = 0.028;  // claw wire radius
+const RAIL_R = 0.022;         // gallery rail wire radius
+const RAIL_Y = -0.2;          // rail height, relative to the girdle
+
+// Height of the stone's top surface at a given fraction of its radius.
+function crownHeightAt(profile, rad) {
+  for (let i = profile.length - 1; i > 0; i--) {
+    const [r1, y1] = profile[i], [r0, y0] = profile[i - 1];
+    if (y1 > 0 && rad >= r1 && rad <= r0) return y1 + ((rad - r1) / (r0 - r1)) * (y0 - y1);
+  }
+  return 0;
+}
+
+/**
+ * Where every claw runs, in head space (origin at the stone's girdle centre).
+ * Each claw starts buried in the band, comes out through its top surface, passes
+ * through the gallery rail, grips the stone's widest point and ends on the crown.
+ * Pure maths, no rendering, so the attachment can be checked without a browser.
+ */
+export function headLayout(cutKey) {
+  const cut = CUTS[cutKey];
+  const r = GEM_R * cut.size;
+  const railR = r * 0.74;               // claw distance from centre at rail height (before sx/sz)
+  const step = (Math.PI * 2) / cut.prongs;
+  const offset = cut.prongs === 4 ? cut.phi : step / 2;   // corners, or evenly round a round stone
+  const tipRad = 0.9;
+  const tipY = crownHeightAt(cut.profile, tipRad) * r + CLAW_R * 0.4;
+  const shell = (rho, x) => Math.sqrt(rho * rho - x * x) - GIRDLE_Y;   // y on a band circle of radius rho
+
+  const claws = [];
+  for (let k = 0; k < cut.prongs; k++) {
+    const a = offset + k * step;
+    const sa = Math.sin(a), ca = Math.cos(a);
+    const dx = sa * cut.sx, dz = ca * cut.sz;
+    const xb = sa * 0.12, zb = ca * 0.08;   // footprint on the band, kept well inside its width
+    const xe = sa * 0.15, ze = ca * 0.1;
+    claws.push({
+      angle: a,
+      points: [
+        [xb, shell(BAND.rMid, xb), zb],                 // anchored in the middle of the band's metal
+        [xe, shell(BAND_TOP + 0.015, xe), ze],          // just out of the band's top surface
+        [dx * railR, RAIL_Y, dz * railR],               // through the gallery rail
+        [dx * r * 1.04, 0, dz * r * 1.04],              // against the stone's widest point
+        [dx * r * tipRad, tipY, dz * r * tipRad],       // folded over onto the crown
+      ],
+    });
+  }
+  // The rail follows the stone's outline (round, oval, square, octagon) and passes
+  // through every claw, which all sit on the outline's corners.
+  const railPoints = [];
+  const vert = (i) => {
+    const a = cut.phi + (i / cut.seg) * Math.PI * 2;
+    return [Math.sin(a) * cut.sx * railR, Math.cos(a) * cut.sz * railR];
+  };
+  const perEdge = cut.seg >= 16 ? 1 : 8;
+  for (let i = 0; i < cut.seg; i++) {
+    const [x0, z0] = vert(i), [x1, z1] = vert(i + 1);
+    for (let j = 0; j < perEdge; j++) {
+      const t = perEdge === 1 ? 0 : 0.06 + (0.88 * j) / (perEdge - 1);   // trims each corner slightly to round it
+      railPoints.push([x0 + (x1 - x0) * t, RAIL_Y, z0 + (z1 - z0) * t]);
+    }
+  }
+
+  return { r, cut, claws, rail: { points: railPoints, y: RAIL_Y }, tip: { rad: tipRad, y: tipY } };
+}
+
+export function initRing(canvas, initial, { reducedMotion = false, onReady, spin: startSpin = 0.6 } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -79,13 +148,13 @@ export function initRing(canvas, initial, { reducedMotion = false, onReady } = {
   // ── band: a comfort-fit cross-section swept round the finger ──
   const profile = [];
   const N = 64;
-  const rMid = 1.075, halfT = 0.075, halfW = 0.16;
+  const { rMid, halfT, halfW, exp } = BAND;
   for (let i = 0; i <= N; i++) {
     const t = (i / N) * Math.PI * 2;
     const c = Math.cos(t), s = Math.sin(t);
     profile.push(new THREE.Vector2(
-      rMid + halfT * Math.sign(c) * Math.pow(Math.abs(c), 0.55),
-      halfW * Math.sign(s) * Math.pow(Math.abs(s), 0.55),
+      rMid + halfT * Math.sign(c) * Math.pow(Math.abs(c), exp),
+      halfW * Math.sign(s) * Math.pow(Math.abs(s), exp),
     ));
   }
   const bandGeo = new THREE.LatheGeometry(profile, 160);
@@ -115,37 +184,23 @@ export function initRing(canvas, initial, { reducedMotion = false, onReady } = {
       head.remove(child);
       child.traverse?.((o) => o.geometry?.dispose());
     }
-    const cut = CUTS[cutKey];
-    const r = GEM_R * cut.size;
+    const { r, cut, claws, rail: railSpec } = headLayout(cutKey);
 
     const pts = cut.profile.map(([x, y]) => new THREE.Vector2(x, y));
     const gemGeo = new THREE.LatheGeometry(pts, cut.seg, cut.phi);
     gemGeo.scale(r * cut.sx, r, r * cut.sz);
     head.add(new THREE.Mesh(gemGeo, gemMat));
 
-    // claws sit on the stone's corners (or evenly round a round stone)
-    const step = (Math.PI * 2) / cut.prongs;
-    const offset = cut.prongs === 4 ? cut.phi : step / 2;
-    for (let k = 0; k < cut.prongs; k++) {
-      const a = offset + k * step;
-      const dx = Math.sin(a) * cut.sx, dz = Math.cos(a) * cut.sz;
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(dx * r * 0.45, BAND_TOP - GIRDLE_Y - 0.04, dz * r * 0.45),
-        new THREE.Vector3(dx * r * 0.8, -0.2, dz * r * 0.8),
-        new THREE.Vector3(dx * r * 1.05, 0.0, dz * r * 1.05),
-        new THREE.Vector3(dx * r * 0.9, r * 0.24, dz * r * 0.9),
-      ]);
-      head.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 28, 0.028, 10), metal));
-      const tip = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 12), metal);
+    for (const claw of claws) {
+      const curve = new THREE.CatmullRomCurve3(claw.points.map((p) => new THREE.Vector3(...p)), false, 'centripetal');
+      head.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 48, CLAW_R, 12), metal));
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(CLAW_R * 1.25, 16, 12), metal);
       tip.position.copy(curve.getPoint(1));
       head.add(tip);
     }
 
-    const rail = new THREE.Mesh(new THREE.TorusGeometry(r * 0.66, 0.022, 10, 64), metal);
-    rail.rotation.x = Math.PI / 2;
-    rail.scale.set(cut.sx, cut.sz, 1);
-    rail.position.y = -0.17;
-    head.add(rail);
+    const railCurve = new THREE.CatmullRomCurve3(railSpec.points.map((p) => new THREE.Vector3(...p)), true, 'centripetal');
+    head.add(new THREE.Mesh(new THREE.TubeGeometry(railCurve, 192, RAIL_R, 10, true), metal));
 
     glints.forEach((g, i) => {
       const a = i * 2.1 + 0.4;
@@ -155,7 +210,7 @@ export function initRing(canvas, initial, { reducedMotion = false, onReady } = {
   buildHead(initial.cut);
 
   // ── interaction: drag to turn, otherwise a slow showroom spin ──
-  let spin = 0.6, tilt = 0, velocity = 0, dragging = false, lastX = 0, lastY = 0, idleFor = 0;
+  let spin = startSpin, tilt = 0, velocity = 0, dragging = false, lastX = 0, lastY = 0, idleFor = 0;
   canvas.addEventListener('pointerdown', (e) => {
     dragging = true; lastX = e.clientX; lastY = e.clientY;
     canvas.setPointerCapture(e.pointerId);
@@ -175,7 +230,7 @@ export function initRing(canvas, initial, { reducedMotion = false, onReady } = {
 
   // ── changes from the brief / controls ──
   let popT = 1, pendingCut = null, currentCut = initial.cut;
-  window.addEventListener('kanvas:ring', (e) => {
+  window.addEventListener('kastit:ring', (e) => {
     const { metal: m, cut } = e.detail;
     targetColor.setHex(METALS[m].color);
     targetRoughness = METALS[m].roughness;

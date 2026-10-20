@@ -139,7 +139,7 @@ function applyRing(item) {
   state.cut = item.cut;
   state.metal = item.metal;
   syncControls();
-  window.dispatchEvent(new CustomEvent('kanvas:ring', { detail: { ...state } }));
+  window.dispatchEvent(new CustomEvent('kastit:ring', { detail: { ...state } }));
 }
 
 async function typeBrief(item, { fast = false } = {}) {
@@ -260,7 +260,7 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
-  const subject = `Kanvas early access: ${data.get('company')}`;
+  const subject = `Kastit early access: ${data.get('company')}`;
   const body = [
     `Name: ${data.get('name')}`,
     `Company: ${data.get('company')}`,
