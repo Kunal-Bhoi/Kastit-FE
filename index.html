@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kanvas — Describe a ring. Get it CAD-ready in minutes.</title>
+  <meta name="description" content="Kanvas is generative CAD for fine jewellery. Describe a ring in plain words and get a manufacturable 3D model: an editable Rhino file, a print-ready STL and the exact metal weight — in minutes, not days.">
+  <meta name="theme-color" content="#0c0a08">
+
+  <!-- Social previews. Replace /assets/og.png with the absolute URL
+       (https://your-domain/assets/og.png) once the domain is live:
+       WhatsApp, LinkedIn and Facebook ignore relative image paths. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kanvas">
+  <meta property="og:title" content="Kanvas — Describe a ring. Get it CAD-ready in minutes.">
+  <meta property="og:description" content="Generative CAD for fine jewellery. An editable Rhino file, a print-ready STL and the exact metal weight — from one sentence.">
+  <meta property="og:image" content="/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="modulepreload" href="/vendor/three-0.185.1/three.core.min.js">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Kanvas",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Web",
+    "description": "Generative CAD for fine jewellery: describe a ring and get a manufacturable 3D model, an editable Rhino file, a print-ready STL and the exact metal weight."
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ───────────────────────── Navigation ───────────────────────── -->
+  <header class="nav" data-nav>
+    <div class="shell nav__inner">
+      <a class="brand" href="#top" aria-label="Kanvas home">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M9 7h14l6 7-13 13L3 14z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M3 14h26M12.5 7 16 14l3.5-7M16 14v13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".65"/>
+        </svg>
+        <span>Kanvas</span>
+      </a>
+
+      <nav class="nav__links" id="nav-links" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#outputs">What you get</a>
+        <a href="#catalogue">Catalogue</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn--gold btn--sm nav__cta-mobile" href="#access">Get early access</a>
+      </nav>
+
+      <a class="btn btn--gold btn--sm nav__cta" href="#access">Get early access</a>
+
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle>
+        <span class="sr-only">Open menu</span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ───────────────────────── Hero ───────────────────────── -->
+    <section class="hero" id="top">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="shell hero__grid">
+
+        <div class="hero__copy">
+          <p class="eyebrow eyebrow--pill"><span class="dot" aria-hidden="true"></span> Generative CAD for fine jewellery</p>
+
+          <h1 class="hero__title">
+            Say it.<br>
+            <em class="shine">See it.</em><br>
+            Cast it.
+          </h1>
+
+          <p class="hero__lead">
+            Type a ring the way you’d brief your CAD designer. Kanvas builds it as a
+            manufacturable 3D model, with an editable Rhino file, a print-ready STL and the
+            exact metal weight. <strong>Minutes, not days.</strong>
+          </p>
+
+          <!-- Live demo: the brief types itself, then the ring on the right changes to match. -->
+          <div class="brief">
+            <div class="brief__head">
+              <span class="brief__label">Your brief</span>
+              <span class="brief__status" data-brief-status>Reading…</span>
+            </div>
+            <p class="brief__text"><span data-brief-text>A round solitaire, about 1 carat, in 18K yellow gold. Comfort fit, size 14.</span><span class="caret" aria-hidden="true"></span></p>
+            <ul class="brief__chips" data-brief-chips aria-label="What Kanvas read from the brief"></ul>
+          </div>
+
+          <div class="hero__ctas">
+            <a class="btn btn--gold" href="#access">Get early access <span aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost" href="#how">See how it works</a>
+          </div>
+        </div>
+
+        <div class="hero__stage-wrap">
+          <div class="stage" data-stage>
+            <!-- Shown until the 3D ring loads, and kept if the browser has no WebGL. -->
+            <svg class="stage__fallback" viewBox="0 0 400 400" aria-hidden="true">
+              <defs>
+                <linearGradient id="fb-gold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#f6dca3"/><stop offset=".45" stop-color="#c9973f"/><stop offset="1" stop-color="#7a5320"/>
+                </linearGradient>
+                <linearGradient id="fb-gem" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c6d6"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="200" cy="245" rx="112" ry="112" fill="none" stroke="url(#fb-gold)" stroke-width="22"/>
+              <path d="M168 104h64l18 22-50 52-50-52z" fill="url(#fb-gem)" opacity=".92"/>
+              <path d="M150 126h100M184 104l16 22 16-22M200 126v52" stroke="#8fa0b5" stroke-width="2" fill="none" opacity=".6"/>
+            </svg>
+            <canvas class="stage__canvas" data-ring-canvas aria-label="A 3D ring you can rotate by dragging" role="img"></canvas>
+
+            <span class="tag tag--a" aria-hidden="true"><b>.3dm</b> editable in Rhino</span>
+            <span class="tag tag--b" aria-hidden="true"><b>.stl</b> print-ready</span>
+            <span class="tag tag--c" aria-hidden="true"><b>g</b> exact metal weight</span>
+          </div>
+
+          <div class="tryit" role="group" aria-label="Try it: change the ring">
+            <div class="tryit__row">
+              <span class="tryit__label">Metal</span>
+              <div class="tryit__opts" data-control="metal">
+                <button type="button" class="swatch" data-value="yellow18" aria-pressed="true" title="18K yellow gold"><i style="--c1:#fbe3a6;--c2:#d4a043"></i><span>18K Yellow</span></button>
+                <button type="button" class="swatch" data-value="rose18" aria-pressed="false" title="18K rose gold"><i style="--c1:#f6d0c0;--c2:#c27d63"></i><span>18K Rose</span></button>
+                <button type="button" class="swatch" data-value="platinum" aria-pressed="false" title="950 platinum"><i style="--c1:#f4f4f2;--c2:#9fa3a6"></i><span>Platinum</span></button>
+                <button type="button" class="swatch" data-value="gold22" aria-pressed="false" title="22K gold"><i style="--c1:#ffe08a;--c2:#d18f12"></i><span>22K</span></button>
+              </div>
+            </div>
+            <div class="tryit__row">
+              <span class="tryit__label">Cut</span>
+              <div class="tryit__opts" data-control="cut">
+                <button type="button" class="pill" data-value="round" aria-pressed="true">Round</button>
+                <button type="button" class="pill" data-value="oval" aria-pressed="false">Oval</button>
+                <button type="button" class="pill" data-value="princess" aria-pressed="false">Princess</button>
+                <button type="button" class="pill" data-value="emerald" aria-pressed="false">Emerald</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Marquee ───────────────────────── -->
+    <div class="marquee" aria-label="Ring styles, stone cuts and metals Kanvas builds">
+      <div class="marquee__track">
+        <ul>
+          <li>Solitaire</li><li>Halo</li><li>Bezel</li><li>Round cluster</li><li>Shaped cluster</li><li>Half eternity</li><li>Full eternity</li><li>Plain band</li>
+          <li>Round</li><li>Princess</li><li>Oval</li><li>Cushion</li><li>Emerald</li><li>Pear</li><li>Marquise</li>
+          <li>14K</li><li>18K</li><li>22K</li><li>24K</li><li>Platinum</li><li>Silver</li>
+        </ul>
+        <ul aria-hidden="true">
+          <li>Solitaire</li><li>Halo</li><li>Bezel</li><li>Round cluster</li><li>Shaped cluster</li><li>Half eternity</li><li>Full eternity</li><li>Plain band</li>
+          <li>Round</li><li>Princess</li><li>Oval</li><li>Cushion</li><li>Emerald</li><li>Pear</li><li>Marquise</li>
+          <li>14K</li><li>18K</li><li>22K</li><li>24K</li><li>Platinum</li><li>Silver</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ───────────────────────── Numbers ───────────────────────── -->
+    <section class="stats" aria-label="Kanvas in numbers">
+      <div class="shell stats__grid">
+        <div class="stat" data-reveal>
+          <b class="stat__n">Minutes</b>
+          <span>not days, from a brief to a finished CAD file</span>
+        </div>
+        <div class="stat" data-reveal>
+          <b class="stat__n"><span data-count="100">100</span>+</b>
+          <span>ring combinations, ready to build today</span>
+        </div>
+        <div class="stat" data-reveal>
+          <b class="stat__n" data-count="8">8</b>
+          <span>metals, from 925 silver to 24K gold</span>
+        </div>
+        <div class="stat" data-reveal>
+          <b class="stat__n" data-count="2">2</b>
+          <span>files with every ring: an editable .3dm and a print-ready .stl</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Before / after ───────────────────────── -->
+    <section class="section">
+      <div class="shell">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">The problem</p>
+          <h2>Every ring still waits <em>in a queue.</em></h2>
+          <p class="section__sub">
+            Most of what a CAD desk models each week is the same handful of designs,
+            solitaires, bands and eternities, rebuilt by hand. Kanvas takes that repeat work
+            off the desk.
+          </p>
+        </div>
+
+        <div class="versus">
+          <article class="versus__card versus__card--old" data-reveal>
+            <header>
+              <span class="versus__tag">The usual way</span>
+              <h3>Days in a queue</h3>
+            </header>
+            <ol class="timeline">
+              <li>The brief arrives on WhatsApp</li>
+              <li>It waits for a free CAD designer</li>
+              <li>Hours of modelling, by hand</li>
+              <li>Rounds of back-and-forth on changes</li>
+              <li>Weight estimated, price guessed</li>
+            </ol>
+          </article>
+
+          <article class="versus__card versus__card--new" data-reveal>
+            <header>
+              <span class="versus__tag">With Kanvas</span>
+              <h3>Minutes on screen</h3>
+            </header>
+            <ol class="timeline timeline--gold">
+              <li>Type the brief, or share a reference image</li>
+              <li>Kanvas reads it into a precise spec</li>
+              <li>The 3D model is built and checked</li>
+              <li>Download the .3dm and the .stl</li>
+              <li>Exact weight, priced on the spot</li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── How it works ───────────────────────── -->
+    <section class="section section--tint" id="how">
+      <div class="shell">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">How it works</p>
+          <h2>Three steps. <em>No modelling.</em></h2>
+        </div>
+
+        <div class="steps">
+          <article class="step" data-reveal>
+            <span class="step__n">01</span>
+            <h3>Describe it</h3>
+            <p>Write the ring the way you’d brief a designer: style, stone shape and size, metal, ring size. Or share a reference image.</p>
+            <div class="step__visual">
+              <div class="bubble">Halo ring, cushion centre stone, 18K white gold, size 12</div>
+            </div>
+          </article>
+
+          <article class="step" data-reveal>
+            <span class="step__n">02</span>
+            <h3>Kanvas builds it</h3>
+            <p>Your words become a precise spec. A real CAD engine models the ring from it, then checks it for the workshop.</p>
+            <div class="step__visual">
+              <dl class="spec">
+                <div><dt>Style</dt><dd>Halo</dd></div>
+                <div><dt>Centre</dt><dd>Cushion</dd></div>
+                <div><dt>Metal</dt><dd>18K white</dd></div>
+                <div><dt>Size</dt><dd>12</dd></div>
+              </dl>
+              <div class="progress" aria-hidden="true"><i></i></div>
+            </div>
+          </article>
+
+          <article class="step" data-reveal>
+            <span class="step__n">03</span>
+            <h3>Download &amp; make</h3>
+            <p>Get the editable Rhino file, the print-ready mesh and the metal weight in grams. Print, cast, set.</p>
+            <div class="step__visual">
+              <ul class="files">
+                <li><span class="files__ext">.3dm</span> Editable model</li>
+                <li><span class="files__ext">.stl</span> Print-ready mesh</li>
+                <li><span class="files__ext">g</span> Metal weight</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Outputs ───────────────────────── -->
+    <section class="section" id="outputs">
+      <div class="shell">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">What you get</p>
+          <h2>Everything the workshop needs. <em>In one go.</em></h2>
+        </div>
+
+        <div class="bento">
+          <article class="card card--wide" data-reveal>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+            </div>
+            <h3>An editable Rhino file</h3>
+            <p>A real .3dm model your team can open in Rhino and keep refining. A starting point, not a locked picture.</p>
+          </article>
+
+          <article class="card" data-reveal>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 20h16M7 20V9l5-5 5 5v11"/><path d="M10 20v-5h4v5"/></svg>
+            </div>
+            <h3>A print-ready STL</h3>
+            <p>A closed, watertight mesh that goes straight to your printer for casting.</p>
+          </article>
+
+          <article class="card" data-reveal>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg>
+            </div>
+            <h3>The exact metal weight</h3>
+            <p>Measured from the finished model in the alloy you picked, so you can quote before anything is printed.</p>
+          </article>
+
+          <article class="card" data-reveal>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+            </div>
+            <h3>Checked for the bench</h3>
+            <p>Wall thickness, claw size and the metal under every stone are checked, so problems show up on screen, not at the casting table.</p>
+          </article>
+
+          <article class="card card--gold" data-reveal>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
+            </div>
+            <h3>No look-alikes</h3>
+            <p>If a request is outside what Kanvas builds, it tells you which part. It never swaps in something that merely looks right.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Catalogue ───────────────────────── -->
+    <section class="section section--paper" id="catalogue">
+      <div class="shell">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Catalogue</p>
+          <h2>What Kanvas builds <em>today.</em></h2>
+          <p class="section__sub">
+            Rings only, for now, and narrow on purpose. Everything here is built and checked.
+            Anything else is refused by name, never faked.
+          </p>
+        </div>
+
+        <h3 class="cat__title" data-reveal>8 ring styles</h3>
+        <ul class="styles">
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="42" r="15"/><path d="M24 14h16l3 4-11 10-11-10z"/><path d="M21 18h22M25 24l-2-8M39 24l2-8"/></svg>
+            <b>Classic solitaire</b><span>One stone, held up by claws</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="42" r="15"/><rect x="21" y="13" width="22" height="13" rx="4"/><path d="M26 19.5h12"/></svg>
+            <b>Bezel solitaire</b><span>One stone, wrapped in a metal rim</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="44" r="13"/><circle cx="32" cy="19" r="5"/><g class="fill"><circle cx="32" cy="9.5" r="1.8"/><circle cx="38.7" cy="12.3" r="1.8"/><circle cx="41.5" cy="19" r="1.8"/><circle cx="38.7" cy="25.7" r="1.8"/><circle cx="25.3" cy="25.7" r="1.8"/><circle cx="22.5" cy="19" r="1.8"/><circle cx="25.3" cy="12.3" r="1.8"/></g></svg>
+            <b>Halo</b><span>A centre stone ringed with small stones</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="44" r="13"/><g class="fill"><circle cx="32" cy="19" r="3.4"/><circle cx="32" cy="11.5" r="3.4"/><circle cx="32" cy="26.5" r="3.4"/><circle cx="25.5" cy="15.2" r="3.4"/><circle cx="38.5" cy="15.2" r="3.4"/><circle cx="25.5" cy="22.8" r="3.4"/><circle cx="38.5" cy="22.8" r="3.4"/></g></svg>
+            <b>Round cluster</b><span>Small stones gathered into a round head</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="45" r="12"/><g class="fill"><circle cx="32" cy="8" r="2.4"/><circle cx="29" cy="14" r="2.6"/><circle cx="35" cy="14" r="2.6"/><circle cx="26.5" cy="20.5" r="2.8"/><circle cx="32" cy="20.5" r="2.8"/><circle cx="37.5" cy="20.5" r="2.8"/><circle cx="29" cy="27" r="2.6"/><circle cx="35" cy="27" r="2.6"/></g></svg>
+            <b>Shaped cluster</b><span>Small stones gathered into a shaped head</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="20"/><circle cx="32" cy="34" r="15"/><g class="fill"><circle cx="14.6" cy="26" r="2.2"/><circle cx="19.4" cy="19.2" r="2.2"/><circle cx="25.8" cy="15.2" r="2.2"/><circle cx="32" cy="14" r="2.2"/><circle cx="38.2" cy="15.2" r="2.2"/><circle cx="44.6" cy="19.2" r="2.2"/><circle cx="49.4" cy="26" r="2.2"/></g></svg>
+            <b>Half eternity</b><span>Stones in a channel across the top</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="15"/><g class="fill"><circle cx="32" cy="14.5" r="2.2"/><circle cx="44.4" cy="19.6" r="2.2"/><circle cx="49.5" cy="32" r="2.2"/><circle cx="44.4" cy="44.4" r="2.2"/><circle cx="32" cy="49.5" r="2.2"/><circle cx="19.6" cy="44.4" r="2.2"/><circle cx="14.5" cy="32" r="2.2"/><circle cx="19.6" cy="19.6" r="2.2"/></g></svg>
+            <b>Full eternity</b><span>Stones in a channel all the way round</span>
+          </li>
+          <li class="style" data-reveal>
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="15"/><path d="M22 18.5a17.5 17.5 0 0 1 9-3.9" opacity=".6"/></svg>
+            <b>Plain band</b><span>Clean metal, flat or comfort fit</span>
+          </li>
+        </ul>
+
+        <div class="cat__split">
+          <div>
+            <h3 class="cat__title" data-reveal>7 stone cuts</h3>
+            <ul class="cuts">
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22"/><path d="M24 22h16l6 10-6 10H24l-6-10z"/><path d="M24 22 18 13M40 22l6-9M46 32h8M40 42l6 9M24 42l-6 9M18 32h-8"/></svg>Round</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="12" y="12" width="40" height="40"/><rect x="22" y="22" width="20" height="20"/><path d="M12 12l10 10M52 12 42 22M52 52 42 42M12 52l10-10"/></svg>Princess</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="32" rx="17" ry="24"/><ellipse cx="32" cy="32" rx="8.5" ry="12"/><path d="M32 8v12M32 44v12M15 32h8.5M40.5 32H49"/></svg>Oval</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="11" y="11" width="42" height="42" rx="13"/><rect x="22" y="22" width="20" height="20" rx="5"/><path d="M15 15l8.5 8.5M49 15l-8.5 8.5M49 49l-8.5-8.5M15 49l8.5-8.5"/></svg>Cushion</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M21 8h22l6 6v36l-6 6H21l-6-6V14z"/><path d="M24 15h16l3 3v28l-3 3H24l-3-3V18z"/><path d="M27 22h10v20H27z"/></svg>Emerald</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7c9 12 17 22 17 32a17 17 0 0 1-34 0c0-10 8-20 17-32z"/><path d="M32 22c4 6 8 11 8 17a8 8 0 0 1-16 0c0-6 4-11 8-17z"/></svg>Pear</li>
+              <li data-reveal><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c13 9 13 43 0 52-13-9-13-43 0-52z"/><path d="M32 18c5.5 5 5.5 23 0 28-5.5-5-5.5-23 0-28z"/></svg>Marquise</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="cat__title" data-reveal>8 metals, priced by exact weight</h3>
+            <ul class="metals">
+              <li data-reveal><i style="--c1:#fbe6b0;--c2:#cfa24e"></i>14K yellow gold</li>
+              <li data-reveal><i style="--c1:#fbe3a6;--c2:#d4a043"></i>18K yellow gold</li>
+              <li data-reveal><i style="--c1:#f6d0c0;--c2:#c27d63"></i>18K rose gold</li>
+              <li data-reveal><i style="--c1:#f7f6f1;--c2:#b9b7ae"></i>18K white gold</li>
+              <li data-reveal><i style="--c1:#ffe08a;--c2:#d18f12"></i>22K gold</li>
+              <li data-reveal><i style="--c1:#ffd76a;--c2:#c97f00"></i>24K gold</li>
+              <li data-reveal><i style="--c1:#f4f4f2;--c2:#9fa3a6"></i>950 platinum</li>
+              <li data-reveal><i style="--c1:#f1f3f5;--c2:#a7adb4"></i>925 silver</li>
+            </ul>
+            <p class="cat__note" data-reveal>Plus a choice of flat or comfort-fit band.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Promise ───────────────────────── -->
+    <section class="promise">
+      <div class="shell">
+        <blockquote data-reveal>
+          <p>“A ring that only <em>looks</em> right is worse than no ring at all.”</p>
+        </blockquote>
+        <p class="promise__sub" data-reveal>
+          So when a request is outside what Kanvas can build exactly, it tells you which part,
+          and stops. No silent swaps. No look-alikes your customer would only notice at the counter.
+        </p>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Who it's for ───────────────────────── -->
+    <section class="section">
+      <div class="shell">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Who it’s for</p>
+          <h2>Made for the people who <em>make jewellery.</em></h2>
+        </div>
+
+        <div class="who">
+          <article class="who__card" data-reveal>
+            <span class="who__n">Manufacturers</span>
+            <h3>Turn orders around the same day</h3>
+            <p>Catalogue and custom rings move from brief to print without waiting for a free designer. Quote with the real weight, not a guess.</p>
+          </article>
+          <article class="who__card" data-reveal>
+            <span class="who__n">Retailers &amp; brands</span>
+            <h3>Show it before they leave the store</h3>
+            <p>Turn a customer’s idea into a 3D model while they’re still at the counter, with a price based on the real metal weight.</p>
+          </article>
+          <article class="who__card" data-reveal>
+            <span class="who__n">CAD teams</span>
+            <h3>Spend skill where it counts</h3>
+            <p>Hand the repeat work, solitaires, bands and eternities, to Kanvas. Keep your designers on the pieces that need a human hand.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── FAQ ───────────────────────── -->
+    <section class="section section--tint" id="faq">
+      <div class="shell faq">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">FAQ</p>
+          <h2>Questions, <em>answered.</em></h2>
+        </div>
+
+        <div class="faq__list">
+          <details data-reveal>
+            <summary>Do I need Rhino or any CAD skills?</summary>
+            <p>No. You describe the ring in your browser. You get back a .3dm file, which opens in Rhino if your team uses it, and an .stl mesh that works with any 3D printer or slicer.</p>
+          </details>
+          <details data-reveal>
+            <summary>What happens if my design isn’t supported?</summary>
+            <p>Kanvas tells you exactly which part it can’t build yet, such as the stone shape or the band style. It never quietly swaps in a similar-looking ring.</p>
+          </details>
+          <details data-reveal>
+            <summary>How accurate is the metal weight?</summary>
+            <p>It is measured from the finished 3D model using the density of the alloy you chose, not looked up from a rough table.</p>
+          </details>
+          <details data-reveal>
+            <summary>Can I describe a ring in my own words?</summary>
+            <p>Yes. Write it the way you’d brief a CAD designer: style, stone shape and size, metal and ring size. You can also share a reference image.</p>
+          </details>
+          <details data-reveal>
+            <summary>Which jewellery can Kanvas make?</summary>
+            <p>Rings, today: 8 styles, 7 stone cuts, 2 band profiles and 8 metals. Pendants and earrings aren’t supported yet.</p>
+          </details>
+          <details data-reveal>
+            <summary>How do I get access?</summary>
+            <p>Kanvas is in early access. Leave your details below and we’ll get in touch.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── CTA / form ───────────────────────── -->
+    <section class="cta" id="access">
+      <div class="cta__glow" aria-hidden="true"></div>
+      <div class="shell cta__grid">
+        <div class="cta__copy" data-reveal>
+          <p class="eyebrow">Early access</p>
+          <h2>Your next ring is <em>one sentence</em> away.</h2>
+          <p class="section__sub">Tell us what you make. We’ll show you Kanvas on your own designs.</p>
+        </div>
+
+        <form class="form" data-access-form novalidate data-reveal>
+          <div class="form__row">
+            <label>Your name<input name="name" autocomplete="name" required></label>
+            <label>Company<input name="company" autocomplete="organization" required></label>
+          </div>
+          <div class="form__row">
+            <label>Email<input name="email" type="email" autocomplete="email" required></label>
+            <label><span>Phone <small>(optional)</small></span><input name="phone" type="tel" autocomplete="tel"></label>
+          </div>
+          <label>You are a
+            <select name="role">
+              <option>Jewellery manufacturer</option>
+              <option>Retailer or brand</option>
+              <option>CAD studio or designer</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label><span>What would you like Kanvas to build? <small>(optional)</small></span>
+            <textarea name="message" rows="3" placeholder="e.g. Solitaires and half eternities, mostly 18K"></textarea>
+          </label>
+          <button class="btn btn--gold btn--block" type="submit">Request early access <span aria-hidden="true">→</span></button>
+          <p class="form__status" data-form-status role="status"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ───────────────────────── Footer ───────────────────────── -->
+  <footer class="footer">
+    <div class="shell footer__inner">
+      <div>
+        <a class="brand" href="#top" aria-label="Kanvas home">
+          <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M9 7h14l6 7-13 13L3 14z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M3 14h26M12.5 7 16 14l3.5-7M16 14v13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" opacity=".65"/>
+          </svg>
+          <span>Kanvas</span>
+        </a>
+        <p class="footer__tag">Generative CAD for fine jewellery. Made in India.</p>
+      </div>
+      <nav class="footer__links" aria-label="Footer">
+        <a href="#how">How it works</a>
+        <a href="#catalogue">Catalogue</a>
+        <a href="#faq">FAQ</a>
+        <a href="#access" data-contact>Contact</a>
+      </nav>
+    </div>
+    <div class="shell footer__legal">
+      <span>© <span data-year>2026</span> Kanvas. All rights reserved.</span>
+      <span>Rhino is a trademark of Robert McNeel &amp; Associates.</span>
+    </div>
+  </footer>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
